@@ -1,0 +1,23 @@
+name: Docker CI/CD
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build Docker image and Push the image to DockerHUB
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/leo_bot .
+          docker push ${{ secrets.DOCKER_USERNAME }}/leo_bot
+
+      - name: Deploy Docker container
+        run: |
+          docker stop leo_bot || true
+          docker rm leo_bot || true
+          docker run --restart unless-stopped --name leo_bot -d ${{ secrets.DOCKER_USERNAME }}/leo_bot
