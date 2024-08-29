@@ -75,6 +75,24 @@ public class ReplayMarkap {
         reply.setKeyboard(list);
         return reply;
     }
+    public static ReplyKeyboardMarkup cancelUz(){
+        ReplyKeyboardMarkup reply=new ReplyKeyboardMarkup();
+        List<KeyboardRow> one=new ArrayList<>();
+        KeyboardRow cancel=new KeyboardRow();
+        cancel.add(KeyboardButton.builder().text("Bekor qilish ↪\uFE0F").build());
+        one.add(cancel);
+        reply.setKeyboard(one);
+        return  reply;
+    }
+    public static ReplyKeyboardMarkup cancelRu(){
+        ReplyKeyboardMarkup reply=new ReplyKeyboardMarkup();
+        List<KeyboardRow> one=new ArrayList<>();
+        KeyboardRow cancel=new KeyboardRow();
+        cancel.add(KeyboardButton.builder().text("Отмена ↪\uFE0F").build());
+        one.add(cancel);
+        reply.setKeyboard(one);
+        return  reply;
+    }
     public static ReplyKeyboardRemove removeKeyboard(){
         return new ReplyKeyboardRemove(true);
     }

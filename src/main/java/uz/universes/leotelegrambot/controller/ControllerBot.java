@@ -48,7 +48,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                         if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
                             executeMessage(SendMessag.sendM(message.getChatId(), "Leo Botiga xush kelibsiz", ReplayMarkap.menuUz(message.getChatId().toString())));
                         } else if (usersMap.getUserDto(message.getChatId()).getLang().equals("ru")) {
-                            executeMessage(SendMessag.sendM(message.getChatId(), "Добро пожаловать в Лео Бот", ReplayMarkap.menuUz(message.getChatId().toString())));
+                            executeMessage(SendMessag.sendM(message.getChatId(), "Добро пожаловать в Лео Бот", ReplayMarkap.menuRu(message.getChatId().toString())));
                         }
                     }
                 } else if (!stepUser.getStatus(message.getChatId())&&stepUser.getStep(message.getChatId()).equals(Step.NAME)) {
@@ -95,9 +95,9 @@ public class ControllerBot extends TelegramLongPollingBot {
                             }
                         } else {
                             if (usersDto.getLang().equals("uz")) {
-                                executeMessage(SendMessag.sendM(message.getChatId(), "Kod xato \uD83D\uDE45\u200D♂\uFE0F"));
+                                executeMessage(SendMessag.sendM(message.getChatId(), "Kod xato \uD83D\uDE45\u200D♂\uFE0F",ReplayMarkap.cancelUz()));
                             } else if (usersDto.getLang().equals("ru")) {
-                                executeMessage(SendMessag.sendM(message.getChatId(), "Ошибка кода \uD83D\uDE45\u200D♂\uFE0F"));
+                                executeMessage(SendMessag.sendM(message.getChatId(), "Ошибка кода \uD83D\uDE45\u200D♂\uFE0F",ReplayMarkap.cancelRu()));
                             }
                         }
                     } else {
@@ -131,6 +131,12 @@ public class ControllerBot extends TelegramLongPollingBot {
                 }else if (message.getText().equals("Бонус \uD83C\uDF81")) {
                     stepUser.setStep(message.getChatId(),Step.BONUS_COD);
                     executeMessage(SendMessag.sendM(message.getChatId(),TextRu.bonusCod));
+                } else if (message.getText().equals("Bekor qilish ↪\uFE0F")) {
+                    stepUser.removeStep(message.getChatId());
+                    executeMessage(SendMessag.sendM(message.getChatId(),"Jarayon bekor qilindi",ReplayMarkap.menuUz(message.getChatId().toString())));
+                } else if (message.getText().equals("Отмена ↪\uFE0F")) {
+                    stepUser.removeStep(message.getChatId());
+                    executeMessage(SendMessag.sendM(message.getChatId(),"Процесс отменен",ReplayMarkap.menuRu(message.getChatId().toString())));
                 }
             } else if (message.hasContact()) {
                 stepUser.setStep(message.getChatId(),Step.CHECK);
