@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.CopyMessage;
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -47,7 +48,14 @@ public class ControllerBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()){
             this.message=update.getMessage();
-            if (message.hasText()){
+            if (message.getChatId().equals(-1002157490414L)&&message.getReplyToMessage().getForwardFrom()!=null) {
+                executeMessage(CopyMessage.builder()
+                        .messageId(message.getMessageId())
+                        .fromChatId(message.getChatId())
+                        .chatId(message.getReplyToMessage().getForwardFrom().getId())
+                        .build()
+                );
+            }else if (message.hasText()){
                 if (message.getText().equals("/start")&&stepUser.getStatus(message.getChatId())){
                     if (!requestService.checkUser(message.getChatId())) {
                         stepUser.setStep(message.getChatId(), Step.LANG);
@@ -90,7 +98,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                 } else if (!stepUser.getStatus(message.getChatId())&&stepUser.getStep(message.getChatId()).equals(Step.CHECK)) {
                     UsersDto usersDto = regis.getMapUsers(message.getChatId());
                     if (message.getText().length() == 5) {
-                        Verify verify = requestService.verifyPhone(CheckSMS.builder().code(message.getText()).phone(usersDto.getPhone()).build());
+                       Verify verify = requestService.verifyPhone(CheckSMS.builder().code(message.getText()).phone(usersDto.getPhone()).build());
 
                         if (verify.getSuccess()) {
                             stepUser.setStep(message.getChatId(), Step.REGION);
@@ -144,7 +152,6 @@ public class ControllerBot extends TelegramLongPollingBot {
                         bonusSave.setBonusMap(message.getChatId(),message);
                         if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
                             executeMessage(SendMessag.sendM(message.getChatId(),"Promo Code Muvaffaqiyatli  ✅ \n\n endi 3 tadan kam bolmagan photo yuboring !"));
-
                         } else if (usersMap.getUserDto(message.getChatId()).getLang().equals("ru")) {
                             executeMessage(SendMessag.sendM(message.getChatId(),"Промокод успешен ✅\n" +
                                     "\n" +
@@ -239,7 +246,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                         throw new RuntimeException(e);
                     }
                 }
-            }
+                }
         } else if (update.hasCallbackQuery()) {
             this.message=update.getCallbackQuery().getMessage();
             if (!stepUser.getStatus(message.getChatId())&&stepUser.getStep(message.getChatId()).equals(Step.LANG)){
@@ -302,7 +309,12 @@ public class ControllerBot extends TelegramLongPollingBot {
                 }
             } else if (update.getCallbackQuery().getData().startsWith("SAVE_PHOTO_")) {
                 Long chatId=Long.valueOf(update.getCallbackQuery().getData().split("_")[2]);
-                executeMessage(SendMessag.sendM(chatId,"Bonus xisoblandi ✅ "));
+               Verify verify= requestService.saveBonus(bonusSave.getBonusSize(chatId).get(0).getText(),Bonus.builder().chat_id(Integer.parseInt(chatId.toString())).build());
+               if (usersMap.getUserDto(chatId).getLang().equals("uz")){
+                   executeMessage(SendMessag.sendM(chatId,verify.getMessage_uz()+" ✅"));
+               } else if (usersMap.getUserDto(chatId).getLang().equals("ru")) {
+                   executeMessage(SendMessag.sendM(chatId,verify.getMessage_ru()+" ✅"));
+               }
                 executeMessage(EditMessageText.builder().text("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅\n" +
                         "#config #"+bonusSave.getBonusSize(chatId).get(0).getText()+"" +
                         "\nTastiqladi: "+update.getCallbackQuery().getFrom().getFirstName()+" "+update.getCallbackQuery().getFrom().getLastName() +"" +
@@ -374,6 +386,8 @@ public class ControllerBot extends TelegramLongPollingBot {
                 execute((EditMessageText) o);
             }else if (o instanceof DeleteMessage){
                 execute((DeleteMessage) o );
+            } else if (o instanceof CopyMessage) {
+                execute((CopyMessage) o);
             }
         }catch (TelegramApiException e) {
             throw new RuntimeException(e);

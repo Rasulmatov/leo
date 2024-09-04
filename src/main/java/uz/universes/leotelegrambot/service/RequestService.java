@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.juli.VerbatimFormatter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uz.universes.leotelegrambot.Model.*;
@@ -109,6 +110,33 @@ private final RequestUrl requestUrl;
             if (send.statusCode()!=200){
                 log.warn("Save bolishda xatolik statusCod: "+send.statusCode());
             }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+    public Verify saveBonus(String code , Bonus bonus) {
+        ObjectMapper objectMapper=new ObjectMapper();
+        try {
+            String json=objectMapper.writeValueAsString(bonus);
+            HttpClient client=HttpClient.newHttpClient();
+            HttpRequest request= HttpRequest.newBuilder()
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .header("Content-Type","application/json")
+                    .uri(new URI(requestUrl.getBonusSave().toString()+code+"/"))
+                    .build();
+            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (send.statusCode()!=200){
+                log.warn("Save bolishda xatolik statusCod: "+send.statusCode());
+            }
+            Verify verify=objectMapper.readValue(send.body(),Verify.class);
+            return verify;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         } catch (URISyntaxException e) {

@@ -29,5 +29,7 @@ public class RequestUrl {
     private URI infoConnactions;
     @Value("${web.patchUser}")
     private URI patchUser;
+    @Value("${web.bonusSave}")
+    private URI bonusSave;
 
 }
