@@ -28,6 +28,19 @@ public class InlineButtons {
         inlineKeyboardMarkup.setKeyboard(lists);
         return inlineKeyboardMarkup;
     }
+    public static InlineKeyboardMarkup checkGroupPhoto(String lang){
+        InlineKeyboardMarkup inlineKeyboardMarkup=new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> lists=new ArrayList<>();
+        List<InlineKeyboardButton> lan=new ArrayList<>();
+        if (lang.equals("uz")) {
+            lan.add(InlineKeyboardButton.builder().text("Tastiqlash ✅").callbackData("SAVE_PHOTO").build());
+        } else if (lang.equals("ru")) {
+            lan.add(InlineKeyboardButton.builder().text("Подтверждение ✅").callbackData("SAVE_PHOTO").build());
+        }
+        lists.add(lan);
+        inlineKeyboardMarkup.setKeyboard(lists);
+        return inlineKeyboardMarkup;
+    }
     public static InlineKeyboardMarkup gooRu(){
         InlineKeyboardMarkup inlineKeyboardMarkup=new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> lists=new ArrayList<>();

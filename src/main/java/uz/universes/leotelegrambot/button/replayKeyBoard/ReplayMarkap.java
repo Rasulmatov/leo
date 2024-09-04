@@ -77,6 +77,7 @@ public class ReplayMarkap {
     }
     public static ReplyKeyboardMarkup cancelUz(){
         ReplyKeyboardMarkup reply=new ReplyKeyboardMarkup();
+        reply.setResizeKeyboard(true);
         List<KeyboardRow> one=new ArrayList<>();
         KeyboardRow cancel=new KeyboardRow();
         cancel.add(KeyboardButton.builder().text("Bekor qilish ↪\uFE0F").build());
@@ -86,6 +87,7 @@ public class ReplayMarkap {
     }
     public static ReplyKeyboardMarkup cancelRu(){
         ReplyKeyboardMarkup reply=new ReplyKeyboardMarkup();
+        reply.setResizeKeyboard(true);
         List<KeyboardRow> one=new ArrayList<>();
         KeyboardRow cancel=new KeyboardRow();
         cancel.add(KeyboardButton.builder().text("Отмена ↪\uFE0F").build());

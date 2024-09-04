@@ -33,3 +33,5 @@ build/
 .vscode/
 mvnw.cmd
 mvnw
+.DS_Store
+
