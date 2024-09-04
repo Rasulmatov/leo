@@ -174,8 +174,28 @@ private final RequestUrl requestUrl;
             throw new RuntimeException(e);
         }
     }
+    public Info info() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(new URI(requestUrl.getInfoConnactions().toString()))
+                    .header("Accept", "application/json")
+                    .build();
+            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(send.body());
+            return objectMapper.readValue(send.body(), Info.class);
 
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
 
+    }
 
 
 

@@ -28,16 +28,20 @@ public class InlineButtons {
         inlineKeyboardMarkup.setKeyboard(lists);
         return inlineKeyboardMarkup;
     }
-    public static InlineKeyboardMarkup checkGroupPhoto(String lang){
+    public static InlineKeyboardMarkup checkGroupPhoto(String lang,String chatId){
         InlineKeyboardMarkup inlineKeyboardMarkup=new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> lists=new ArrayList<>();
-        List<InlineKeyboardButton> lan=new ArrayList<>();
+        List<InlineKeyboardButton> conf=new ArrayList<>();
+        List<InlineKeyboardButton> cancel=new ArrayList<>();
         if (lang.equals("uz")) {
-            lan.add(InlineKeyboardButton.builder().text("Tastiqlash ✅").callbackData("SAVE_PHOTO").build());
+            conf.add(InlineKeyboardButton.builder().text("Tastiqlash ✅").callbackData("SAVE_PHOTO_"+chatId).build());
+            cancel.add(InlineKeyboardButton.builder().text("Bonusni bekor qilish ❌").callbackData("NOTSAVE_PHOTO_"+chatId).build());
         } else if (lang.equals("ru")) {
-            lan.add(InlineKeyboardButton.builder().text("Подтверждение ✅").callbackData("SAVE_PHOTO").build());
+            conf.add(InlineKeyboardButton.builder().text("Подтверждение ✅").callbackData("SAVE_PHOTO_"+chatId).build());
+            cancel.add(InlineKeyboardButton.builder().text("Отмена бонуса ❌").callbackData("NOTSAVE_PHOTO_"+chatId).build());
         }
-        lists.add(lan);
+        lists.add(conf);
+        lists.add(cancel);
         inlineKeyboardMarkup.setKeyboard(lists);
         return inlineKeyboardMarkup;
     }

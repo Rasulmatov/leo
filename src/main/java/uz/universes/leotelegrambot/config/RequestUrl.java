@@ -25,6 +25,7 @@ public class RequestUrl {
     private URI regions;
     @Value("${web.checkCode}")
     private URI checkCode;
-
+    @Value("${web.infoConnactions}")
+    private URI infoConnactions;
 
 }

@@ -6,22 +6,18 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
-import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
-import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import uz.universes.leotelegrambot.Model.*;
 import uz.universes.leotelegrambot.button.inlline.InlineButtons;
 import uz.universes.leotelegrambot.button.replayKeyBoard.ReplayMarkap;
 import uz.universes.leotelegrambot.config.Config;
+import uz.universes.leotelegrambot.map.BonusSave;
 import uz.universes.leotelegrambot.map.Regis;
 import uz.universes.leotelegrambot.map.StepUser;
 import uz.universes.leotelegrambot.map.UsersMap;
@@ -33,8 +29,6 @@ import uz.universes.leotelegrambot.text.regis.RegisTextRu;
 import uz.universes.leotelegrambot.text.regis.RegisTextUz;
 import uz.universes.leotelegrambot.utils.Step;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,6 +38,7 @@ public class ControllerBot extends TelegramLongPollingBot {
     private final Config config;
     private final Regis regis;
     private final StepUser stepUser;
+    private final BonusSave bonusSave;
     private final UsersMap usersMap;
     private final RequestService requestService;
     List<PhotoSize> list=new LinkedList<>();
@@ -122,11 +117,20 @@ public class ControllerBot extends TelegramLongPollingBot {
 
                 }
                 }else if (message.getText().equals("Bonus \uD83C\uDF81")) {
-                    stepUser.setStep(message.getChatId(),Step.BONUS_COD);
-                    executeMessage(SendMessag.sendM(message.getChatId(),TextUz.bonusCod,ReplayMarkap.cancelUz()));
+                    if (bonusSave.getBonusStatus(message.getChatId())) {
+                        stepUser.setStep(message.getChatId(), Step.BONUS_COD);
+                        executeMessage(SendMessag.sendM(message.getChatId(), TextUz.bonusCod, ReplayMarkap.cancelUz()));
+                    }else {
+                        executeMessage(SendMessag.sendM(message.getChatId(),"Sizda tekrilayotgan Promokod bor Admin javobini kuting"));
+                    }
                 }else if (message.getText().equals("Бонус \uD83C\uDF81")) {
-                    stepUser.setStep(message.getChatId(),Step.BONUS_COD);
-                    executeMessage(SendMessag.sendM(message.getChatId(),TextRu.bonusCod,ReplayMarkap.cancelRu()));
+                    if (bonusSave.getBonusStatus(message.getChatId())) {
+                        stepUser.setStep(message.getChatId(),Step.BONUS_COD);
+                        executeMessage(SendMessag.sendM(message.getChatId(),TextRu.bonusCod,ReplayMarkap.cancelRu()));
+                    }else {
+                        executeMessage(SendMessag.sendM(message.getChatId(),"У вас есть подтвержденный промокод. Дождитесь ответа администратора"));
+                    }
+
                 } else if (message.getText().equals("Bekor qilish ↪\uFE0F")) {
                     stepUser.removeStep(message.getChatId());
                     executeMessage(SendMessag.sendM(message.getChatId(),"Jarayon bekor qilindi",ReplayMarkap.menuUz(message.getChatId().toString())));
@@ -137,12 +141,14 @@ public class ControllerBot extends TelegramLongPollingBot {
                     if (message.getText().length()<=10||isAlphaNumericOnly(message.getText())){
                     if (requestService.checkCode(message.getText())){
                         stepUser.setStep(message.getChatId(),Step.SEND_PHOTO);
+                        bonusSave.setBonusMap(message.getChatId(),message);
                         if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
-                            executeMessage(SendMessag.sendM(message.getChatId(),"Promo Code Muvaffaqiyatli  ✅ \n\n endi photo yuboring"));
+                            executeMessage(SendMessag.sendM(message.getChatId(),"Promo Code Muvaffaqiyatli  ✅ \n\n endi 3 tadan kam bolmagan photo yuboring !"));
+
                         } else if (usersMap.getUserDto(message.getChatId()).getLang().equals("ru")) {
                             executeMessage(SendMessag.sendM(message.getChatId(),"Промокод успешен ✅\n" +
                                     "\n" +
-                                    " отправь фото сейчас"));
+                                    " Теперь пришлите минимум 3 фотографии!"));
                         }
                     }else {
                         if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
@@ -158,6 +164,20 @@ public class ControllerBot extends TelegramLongPollingBot {
                             executeMessage(SendMessag.sendM(message.getChatId(),"Нет доступного промокода \uD83D\uDEAB"));
                         }
                     }
+                } else if (message.getText().equals("Связаться с нами \uD83D\uDCDE✉\uFE0F")) {
+                    Info info= requestService.info();
+                    executeMessage(SendMessag.sendM(
+                            message.getChatId(),"Link: "+info.getLink() +"\n" +
+                                    "Phone: \n"+info.getPhones()[0].getPhone()+"\n"+info.getPhones()[1].getPhone()
+
+                    ));
+                }else if (message.getText().equals("Biz bilan bog'lanish \uD83D\uDCDE✉\uFE0F")){
+                    Info info= requestService.info();
+                    executeMessage(SendMessag.sendM(
+                            message.getChatId(),"Link: "+info.getLink() +"\n" +
+                                    "Phone: "+info.getPhones().toString()
+
+                    ));
                 }
             } else if (message.hasContact()) {
                 stepUser.setStep(message.getChatId(),Step.CHECK);
@@ -175,52 +195,38 @@ public class ControllerBot extends TelegramLongPollingBot {
                     executeMessage(SendMessag.sendM(message.getChatId(),RegisTextRu.checkPhone,ReplayMarkap.removeKeyboard()));
                 }
             } else if (message.hasPhoto()&&!stepUser.getStatus(message.getChatId())&&stepUser.getStep(message.getChatId()).equals(Step.SEND_PHOTO)) {
-                list.add(message.getPhoto().get(message.getPhoto().size()-1));
-                System.out.println(list.size());
-                if (list.size()==3){
-
-                    List<InputMedia> list1 = new ArrayList<>();
-                    for (int i = 1; i <list.size(); i++) {
-                        InputMediaPhoto inputMediaPhoto = new InputMediaPhoto();
-                        inputMediaPhoto.setMedia(list.get(i).getFileId());
-                        list1.add(inputMediaPhoto);
+                bonusSave.setBonusMap(message.getChatId(),message);
+                if (bonusSave.getBonusSize(message.getChatId()).size()==4){
+                    List<Message> photoList= bonusSave.getBonusSize(message.getChatId());
+                    for (int i = 1; i <photoList.size(); i++) {
+                        ForwardMessage forwardMessage=new ForwardMessage();
+                        forwardMessage.setMessageId(photoList.get(i).getMessageId());
+                        forwardMessage.setFromChatId(photoList.get(i).getChatId());
+                        forwardMessage.setChatId(-1002157490414L);
+                        try {
+                            execute(forwardMessage);
+                        } catch (TelegramApiException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
-
-                    SendMediaGroup sendMedia = new SendMediaGroup();
-                    sendMedia.setChatId(-1002157490414L);
-                    sendMedia.setMedias(list1);
-
-                    SendPhoto sendPhoto=new SendPhoto();
-                    sendPhoto.setPhoto(new InputFile(list.get(0).getFileId()));
+                    SendMessage sendPhoto=new SendMessage();
                     sendPhoto.setChatId(-1002157490414L);
-                    sendPhoto.setCaption("Buni tastiqlaysizmi?");
-                    sendPhoto.setReplyMarkup(InlineButtons.checkGroupPhoto(usersMap.getUserDto(message.getChatId()).getLang()));
-                    if (usersMap.getUserDto(message.getChatId()).equals("uz")) {
-                        executeMessage(SendMessag.sendM(message.getChatId(), "Admin javobini kuting!  Uz ", ReplayMarkap.menuUz(message.getChatId().toString())));
-                    }else if (usersMap.getUserDto(message.getChatId()).equals("uz")){
-                        executeMessage(SendMessag.sendM(message.getChatId(), "Admin javobini kuting! Ru", ReplayMarkap.menuRu(message.getChatId().toString())));
+                    sendPhoto.setReplyMarkup(InlineButtons.checkGroupPhoto(usersMap.getUserDto(message.getChatId()).getLang(),photoList.get(0).getChatId().toString()));
+                    stepUser.removeStep(message.getChatId());
+                    if (usersMap.getUserDto(photoList.get(0).getChatId()).getLang().equals("uz")) {
+                        sendPhoto.setText(TextUz.checkGroupPhoto);
+                        executeMessage(SendMessag.sendM(photoList.get(0).getChatId(), "Admin javobini kuting!", ReplayMarkap.menuUz(message.getChatId().toString())));
+
+                    }else if (usersMap.getUserDto(photoList.get(0).getChatId()).getLang().equals("ru")){
+                        sendPhoto.setText(TextRu.checkGroupPhoto);
+                        executeMessage(SendMessag.sendM(photoList.get(0).getChatId(), "Ждите ответа администратора!", ReplayMarkap.menuRu(message.getChatId().toString())));
                     }
                     try {
-                        execute(sendMedia);
                         execute(sendPhoto);
                     } catch (TelegramApiException e) {
                         throw new RuntimeException(e);
                     }
                 }
-
-
-
-
-
-               /* ForwardMessage forwardMessage=new ForwardMessage();
-                forwardMessage.setMessageId(message.getMessageId());
-                forwardMessage.setFromChatId(message.getChatId());
-                forwardMessage.setChatId(-1002157490414L);
-                try {
-                  //  execute(forwardMessage);
-                } catch (TelegramApiException e) {
-                    throw new RuntimeException(e);
-                }*/
             }
         } else if (update.hasCallbackQuery()) {
             this.message=update.getCallbackQuery().getMessage();
@@ -282,6 +288,26 @@ public class ControllerBot extends TelegramLongPollingBot {
                             .build()
                     );
                 }
+            } else if (update.getCallbackQuery().getData().startsWith("SAVE_PHOTO_")) {
+                Long chatId=Long.valueOf(update.getCallbackQuery().getData().split("_")[2]);
+                executeMessage(SendMessag.sendM(chatId,"Bonus xisoblandi ✅ "));
+                executeMessage(EditMessageText.builder().text("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅\n" +
+                        "#config #"+bonusSave.getBonusSize(chatId).get(0).getText()+"" +
+                        "\nTastiqladi: "+update.getCallbackQuery().getFrom().getFirstName()+" "+update.getCallbackQuery().getFrom().getLastName() +"" +
+                        "\nMijoz: "+usersMap.getUserDto(chatId).getName()+"" +
+                        "\nchatId: #"+chatId).messageId(message.getMessageId()).chatId(message.getChatId()).build());
+                bonusSave.deleteBonus(chatId);
+
+
+            } else if (update.getCallbackQuery().getData().startsWith("NOTSAVE_PHOTO_")) {
+                Long chatId=Long.valueOf(update.getCallbackQuery().getData().split("_")[2]);
+                executeMessage(SendMessag.sendM(chatId,"Bonus xisoblanmadi ❌"));
+                executeMessage(EditMessageText.builder().text("❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌\n" +
+                        "#cancell "+
+                        "\nBekor qildi: "+update.getCallbackQuery().getFrom().getFirstName()+" "+update.getCallbackQuery().getFrom().getLastName() +"" +
+                        "\nMijoz: "+usersMap.getUserDto(chatId).getName()+"" +
+                        "\nchatId: #"+chatId).messageId(message.getMessageId()).chatId(message.getChatId()).build());
+                bonusSave.deleteBonus(chatId);
             }
         }
     }
@@ -306,7 +332,7 @@ public class ControllerBot extends TelegramLongPollingBot {
             return false;
         }
 
-        return true; // Faqat harf va raqamlar bo'lsa, true qaytaradi
+        return true;
     }
 
     @Override

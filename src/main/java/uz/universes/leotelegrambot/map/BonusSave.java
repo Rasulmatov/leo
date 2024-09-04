@@ -8,31 +8,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 @Component
-public class PhotoSizeSave {
-    private final Map<Long, List<Message>> photoMap = new HashMap<>();
+public class BonusSave {
+    private final Map<Long, List<Message>> bonusMap = new HashMap<>();
 
-    public void setPhotoMap(Long chatId, Message message) {
+    public void setBonusMap(Long chatId, Message message) {
         List<Message> list;
-        if (getPhotoStatus(chatId)){
+        if (getBonusStatus(chatId)){
             list=new ArrayList<>();
             list.add(message);
-            photoMap.put(chatId, (list));
+            bonusMap.put(chatId, (list));
         }else {
-            list=photoMap.get(chatId);
+            list=bonusMap.get(chatId);
             list.add(message);
-            photoMap.put(chatId,list);
+            bonusMap.put(chatId,list);
         }
     }
 
-    public List<Message> getPhotoSize(Long chatId) {
-        return photoMap.get(chatId);
+    public List<Message> getBonusSize(Long chatId) {
+        return bonusMap.get(chatId);
     }
 
-    public Boolean getPhotoStatus(Long chatId) {
-        return photoMap.get(chatId) == null;
+    public Boolean getBonusStatus(Long chatId) {
+        return bonusMap.get(chatId) == null;
     }
-    public void deletePhoto(Long chatId){
-        photoMap.remove(chatId);
+    public void deleteBonus(Long chatId){
+        bonusMap.remove(chatId);
     }
 
 
