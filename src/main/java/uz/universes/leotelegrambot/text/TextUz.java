@@ -10,6 +10,6 @@ public interface TextUz {
     String myInfo="\uD83D\uDCB0 <b>Bonus</b> : %s \n \uD83D\uDC64 <b>Ism</b> : %s \n" +
             "\uD83D\uDCDE <b>Tel</b> : %s \n" +
             "\uD83C\uDFE0 <b>Joylashuv</b> : %s\n" +
-            "<b>Til</b> : %s";
+            "\uD83C\uDFF3<b>Til</b> : %s";
 
 }

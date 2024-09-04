@@ -126,9 +126,9 @@ private final RequestUrl requestUrl;
             String json=objectMapper.writeValueAsString(entity);
             HttpClient client=HttpClient.newHttpClient();
             HttpRequest request= HttpRequest.newBuilder()
-                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .method("PATCH", HttpRequest.BodyPublishers.ofString(json))
                     .header("Content-Type","application/json")
-                    .uri(new URI(requestUrl.getSaveUser().toString()+chatid+"/"))
+                    .uri(new URI(requestUrl.getPatchUser().toString()+chatid+"/"))
                     .build();
             HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (send.statusCode()!=200){

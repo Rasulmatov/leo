@@ -174,7 +174,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                     Info info= requestService.info();
                     executeMessage(SendMessag.sendM(
                             message.getChatId(),"Link: "+info.getLink() +"\n" +
-                                    "Phone: "+info.getPhones().toString()
+                                    "Phone: \n"+info.getPhones()[0].getPhone()+"\n"+info.getPhones()[1].getPhone()
                     ));
                 } else if (message.getText().equals("Мой аккаунт \uD83D\uDC64")) {
                     UsersDto usersDto=requestService.getUsers(message.getChatId());
@@ -330,7 +330,39 @@ public class ControllerBot extends TelegramLongPollingBot {
                                 .build()
                         );
             } else if (!stepUser.getStatus(message.getChatId())&&stepUser.getStep(message.getChatId()).equals(Step.EDITE_LANG)) {
-                
+                UsersDto usersDto=requestService.getUsers(message.getChatId());
+                stepUser.removeStep(message.getChatId());
+                requestService.patchUser(message.getChatId(),UserPatch.builder()
+                                .name(usersDto.getName())
+                                .chat_id(usersDto.getChat_id())
+                                .lang(update.getCallbackQuery().getData())
+                                .phone(usersDto.getPhone())
+                                .region(1)
+                        .build());
+                if (update.getCallbackQuery().getData().equals("uz")) {
+                    executeMessage(EditMessageText.builder().text(String.format(TextUz.myInfo, usersDto.getPoint(),
+                                    usersDto.getName(),
+                                    usersDto.getPhone(),
+                                    usersDto.getRegion(),
+                                    update.getCallbackQuery().getData().toUpperCase()))
+                            .messageId(message.getMessageId())
+                            .chatId(message.getChatId())
+                            .parseMode(ParseMode.HTML)
+                            .replyMarkup(InlineButtons.editeLang(usersDto.getLang().toLowerCase())).build());
+                    executeMessage(SendMessag.sendM(message.getChatId(),"O'zbek tiliga o'tildi !! ",ReplayMarkap.menuUz(message.getChatId().toString())));
+                } else if (update.getCallbackQuery().getData().equals("ru")) {
+                    executeMessage(EditMessageText.builder().text(String.format(TextRu.myInfo, usersDto.getPoint(),
+                                    usersDto.getName(),
+                                    usersDto.getPhone(),
+                                    usersDto.getRegion(),
+                                    update.getCallbackQuery().getData().toUpperCase()))
+                            .messageId(message.getMessageId())
+                            .chatId(message.getChatId())
+                            .parseMode(ParseMode.HTML)
+                            .replyMarkup(InlineButtons.editeLang(usersDto.getLang().toLowerCase())).build());
+                    executeMessage(SendMessag.sendM(message.getChatId(),"Перешёл на русский!!",ReplayMarkap.menuRu(message.getChatId().toString())));
+                }
+                usersMap.deleteUser(message.getChatId());
             }
         }
     }

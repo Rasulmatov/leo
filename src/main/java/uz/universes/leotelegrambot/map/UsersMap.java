@@ -25,6 +25,9 @@ public class UsersMap {
    public Boolean userIsEmpty(Long chatId){
        return listMap.get(chatId)==null;
    }
+   public void deleteUser(Long chatId){
+       listMap.remove(chatId);
+   }
 
     @Scheduled(cron = "0 56 23 * 6 ?")
    private void delete(){
