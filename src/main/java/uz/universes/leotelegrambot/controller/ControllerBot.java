@@ -169,15 +169,27 @@ public class ControllerBot extends TelegramLongPollingBot {
                     executeMessage(SendMessag.sendM(
                             message.getChatId(),"Link: "+info.getLink() +"\n" +
                                     "Phone: \n"+info.getPhones()[0].getPhone()+"\n"+info.getPhones()[1].getPhone()
-
                     ));
                 }else if (message.getText().equals("Biz bilan bog'lanish \uD83D\uDCDE✉\uFE0F")){
                     Info info= requestService.info();
                     executeMessage(SendMessag.sendM(
                             message.getChatId(),"Link: "+info.getLink() +"\n" +
                                     "Phone: "+info.getPhones().toString()
-
                     ));
+                } else if (message.getText().equals("Мой аккаунт \uD83D\uDC64")) {
+                    UsersDto usersDto=requestService.getUsers(message.getChatId());
+                    executeMessage(SendMessag.sendM(message.getChatId(),String.format(TextRu.myInfo,usersDto.getPoint(),
+                            usersDto.getName(),
+                            usersDto.getPhone(),
+                            usersDto.getRegion(),
+                            usersDto.getLang().toUpperCase()),InlineButtons.editeLang(usersDto.getLang().toLowerCase())));
+                }else if (message.getText().equals("Mening Akkauntim \uD83D\uDC64")){
+                    UsersDto usersDto=requestService.getUsers(message.getChatId());
+                    executeMessage(SendMessag.sendM(message.getChatId(),String.format(TextUz.myInfo,usersDto.getPoint(),
+                            usersDto.getName(),
+                            usersDto.getPhone(),
+                            usersDto.getRegion(),
+                            usersDto.getLang().toUpperCase()),InlineButtons.editeLang(usersDto.getLang().toLowerCase())));
                 }
             } else if (message.hasContact()) {
                 stepUser.setStep(message.getChatId(),Step.CHECK);
@@ -308,6 +320,17 @@ public class ControllerBot extends TelegramLongPollingBot {
                         "\nMijoz: "+usersMap.getUserDto(chatId).getName()+"" +
                         "\nchatId: #"+chatId).messageId(message.getMessageId()).chatId(message.getChatId()).build());
                 bonusSave.deleteBonus(chatId);
+            } else if (update.getCallbackQuery().getData().equals("EDITE_LANG")) {
+                stepUser.setStep(message.getChatId(),Step.EDITE_LANG);
+                executeMessage(EditMessageText.builder()
+                                .text("Tilni tanlang : ")
+                                .chatId(message.getChatId())
+                                .messageId(message.getMessageId())
+                                .replyMarkup(InlineButtons.lan())
+                                .build()
+                        );
+            } else if (!stepUser.getStatus(message.getChatId())&&stepUser.getStep(message.getChatId()).equals(Step.EDITE_LANG)) {
+                
             }
         }
     }

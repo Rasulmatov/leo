@@ -27,5 +27,7 @@ public class RequestUrl {
     private URI checkCode;
     @Value("${web.infoConnactions}")
     private URI infoConnactions;
+    @Value("${web.patchUser}")
+    private URI patchUser;
 
 }

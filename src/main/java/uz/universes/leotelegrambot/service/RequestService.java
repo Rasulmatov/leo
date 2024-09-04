@@ -120,6 +120,31 @@ private final RequestUrl requestUrl;
         }
 
     }
+    public void patchUser(Long chatid , UserPatch entity) {
+        ObjectMapper objectMapper=new ObjectMapper();
+        try {
+            String json=objectMapper.writeValueAsString(entity);
+            HttpClient client=HttpClient.newHttpClient();
+            HttpRequest request= HttpRequest.newBuilder()
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .header("Content-Type","application/json")
+                    .uri(new URI(requestUrl.getSaveUser().toString()+chatid+"/"))
+                    .build();
+            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (send.statusCode()!=200){
+                log.warn("Save bolishda xatolik statusCod: "+send.statusCode());
+            }
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
     public List<Region> getRegions() {
         RestTemplate restTemplate = new RestTemplate();
@@ -184,7 +209,6 @@ private final RequestUrl requestUrl;
                     .header("Accept", "application/json")
                     .build();
             HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(send.body());
             return objectMapper.readValue(send.body(), Info.class);
 
         } catch (IOException e) {
@@ -196,6 +220,8 @@ private final RequestUrl requestUrl;
         }
 
     }
+
+
 
 
 

@@ -67,7 +67,7 @@ public class ReplayMarkap {
         webAppInfo.setUrl("https://leo.ravshandev.uz/api/v1/?lang=ru&chat_id="+chatId);
         two.add(KeyboardButton.builder().text("Каталог \uD83D\uDECD").webApp(webAppInfo).build());
         KeyboardRow three=new KeyboardRow();
-        three.add(KeyboardButton.builder().text("Мой аккаунт \uD83D\uDC64").requestPoll(KeyboardButtonPollType.builder().type("Salom").build()).build());
+        three.add(KeyboardButton.builder().text("Мой аккаунт \uD83D\uDC64").build());
         three.add(KeyboardButton.builder().text("Связаться с нами \uD83D\uDCDE✉\uFE0F").build());
         list.add(one);
         list.add(two);

@@ -7,5 +7,6 @@ public enum Step {
     LANG,
     CHECK,
     BONUS_COD,
-    SEND_PHOTO
+    SEND_PHOTO,
+    EDITE_LANG
 }

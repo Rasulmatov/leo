@@ -54,6 +54,19 @@ public class InlineButtons {
         inlineKeyboardMarkup.setKeyboard(lists);
         return inlineKeyboardMarkup;
     }
+    public static InlineKeyboardMarkup editeLang(String lang){
+        InlineKeyboardMarkup inlineKeyboardMarkup=new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> lists=new ArrayList<>();
+        List<InlineKeyboardButton> lan=new ArrayList<>();
+        if (lang.equals("uz")) {
+            lan.add(InlineKeyboardButton.builder().text("Tilni o'zgartrish ✏\uFE0F").callbackData("EDITE_LANG").build());
+        }else if (lang.equals("ru")) {
+            lan.add(InlineKeyboardButton.builder().text("Изменить язык ✏\uFE0F").callbackData("EDITE_LANG").build());
+        }
+        lists.add(lan);
+        inlineKeyboardMarkup.setKeyboard(lists);
+        return inlineKeyboardMarkup;
+    }
     public static ReplyKeyboard region(List<Region> regions, String lang){
         InlineKeyboardMarkup inline=new InlineKeyboardMarkup();
         List<InlineKeyboardButton> list=null;
