@@ -325,7 +325,11 @@ public class ControllerBot extends TelegramLongPollingBot {
 
             } else if (update.getCallbackQuery().getData().startsWith("NOTSAVE_PHOTO_")) {
                 Long chatId=Long.valueOf(update.getCallbackQuery().getData().split("_")[2]);
-                executeMessage(SendMessag.sendM(chatId,"Bonus xisoblanmadi ❌"));
+                if (usersMap.getUserDto(chatId).getLang().equals("uz")) {
+                    executeMessage(SendMessag.sendM(chatId, "Bonus xisoblanmadi ❌"));
+                } else if (usersMap.getUserDto(chatId).getLang().equals("ru")) {
+                    executeMessage(SendMessag.sendM(chatId, "Бонус не засчитывается ❌"));
+                }
                 executeMessage(EditMessageText.builder().text("❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌\n" +
                         "#cancell "+
                         "\nBekor qildi: "+update.getCallbackQuery().getFrom().getFirstName()+" "+update.getCallbackQuery().getFrom().getLastName() +"" +
