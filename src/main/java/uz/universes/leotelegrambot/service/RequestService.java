@@ -207,7 +207,7 @@ private final RequestUrl requestUrl;
             throw new RuntimeException(e);
         }
     }
-    public Boolean checkCode(String code){
+    public CheckCod checkCode(String code){
         ObjectMapper objectMapper=new ObjectMapper();
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -218,7 +218,7 @@ private final RequestUrl requestUrl;
                     .build();
             HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
             CheckCod cod=objectMapper.readValue(send.body(),CheckCod.class);
-            return cod.getSuccess();
+            return cod;
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {

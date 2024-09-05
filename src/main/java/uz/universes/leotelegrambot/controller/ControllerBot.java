@@ -129,7 +129,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                         stepUser.setStep(message.getChatId(), Step.BONUS_COD);
                         executeMessage(SendMessag.sendM(message.getChatId(), TextUz.bonusCod, ReplayMarkap.cancelUz()));
                     }else {
-                        executeMessage(SendMessag.sendM(message.getChatId(),"Sizda tekrilayotgan Promokod bor Admin javobini kuting"));
+                        executeMessage(SendMessag.sendM(message.getChatId(),"Sizda tekshirilayotgan Promokod bor Admin javobini kuting"));
                     }
                 }else if (message.getText().equals("Бонус \uD83C\uDF81")) {
                     if (bonusSave.getBonusStatus(message.getChatId())) {
@@ -147,7 +147,8 @@ public class ControllerBot extends TelegramLongPollingBot {
                     executeMessage(SendMessag.sendM(message.getChatId(),"Процесс отменен",ReplayMarkap.menuRu(message.getChatId().toString())));
                 }else if (!stepUser.getStatus(message.getChatId())&&stepUser.getStep(message.getChatId()).equals(Step.BONUS_COD)){
                     if (message.getText().length()<=10||isAlphaNumericOnly(message.getText())){
-                    if (requestService.checkCode(message.getText())){
+                        CheckCod cod=requestService.checkCode(message.getText());
+                    if (cod.getSuccess()){
                         stepUser.setStep(message.getChatId(),Step.SEND_PHOTO);
                         bonusSave.setBonusMap(message.getChatId(),message);
                         if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
@@ -159,9 +160,9 @@ public class ControllerBot extends TelegramLongPollingBot {
                         }
                     }else {
                         if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
-                            executeMessage(SendMessag.sendM(message.getChatId(), "Proma kod mavjud emas \uD83D\uDEAB"));
+                            executeMessage(SendMessag.sendM(message.getChatId(), cod.getMessage_uz()+"\uD83D\uDEAB"));
                         } else if (usersMap.getUserDto(message.getChatId()).getLang().equals("ru")) {
-                            executeMessage(SendMessag.sendM(message.getChatId(),"Нет доступного промокода \uD83D\uDEAB"));
+                            executeMessage(SendMessag.sendM(message.getChatId(),cod.getMessage_ru()+"\uD83D\uDEAB"));
                         }
                     }
                     }else {
@@ -338,13 +339,23 @@ public class ControllerBot extends TelegramLongPollingBot {
                 bonusSave.deleteBonus(chatId);
             } else if (update.getCallbackQuery().getData().equals("EDITE_LANG")) {
                 stepUser.setStep(message.getChatId(),Step.EDITE_LANG);
-                executeMessage(EditMessageText.builder()
-                                .text("Tilni tanlang : ")
-                                .chatId(message.getChatId())
-                                .messageId(message.getMessageId())
-                                .replyMarkup(InlineButtons.lan())
-                                .build()
-                        );
+                if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")){
+                    executeMessage(EditMessageText.builder()
+                            .text("Tilni tanlang : ")
+                            .chatId(message.getChatId())
+                            .messageId(message.getMessageId())
+                            .replyMarkup(InlineButtons.lan())
+                            .build()
+                    );
+                }else {
+                    executeMessage(EditMessageText.builder()
+                            .text("Выберите язык: ")
+                            .chatId(message.getChatId())
+                            .messageId(message.getMessageId())
+                            .replyMarkup(InlineButtons.lan())
+                            .build()
+                    );
+                }
             } else if (!stepUser.getStatus(message.getChatId())&&stepUser.getStep(message.getChatId()).equals(Step.EDITE_LANG)) {
                 UsersDto usersDto=requestService.getUsers(message.getChatId());
                 stepUser.removeStep(message.getChatId());
@@ -364,7 +375,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                             .messageId(message.getMessageId())
                             .chatId(message.getChatId())
                             .parseMode(ParseMode.HTML)
-                            .replyMarkup(InlineButtons.editeLang(usersDto.getLang().toLowerCase())).build());
+                            .replyMarkup(InlineButtons.editeLang("uz")).build());
                     executeMessage(SendMessag.sendM(message.getChatId(),"O'zbek tiliga o'tildi !! ",ReplayMarkap.menuUz(message.getChatId().toString())));
                 } else if (update.getCallbackQuery().getData().equals("ru")) {
                     executeMessage(EditMessageText.builder().text(String.format(TextRu.myInfo, usersDto.getPoint(),
@@ -375,7 +386,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                             .messageId(message.getMessageId())
                             .chatId(message.getChatId())
                             .parseMode(ParseMode.HTML)
-                            .replyMarkup(InlineButtons.editeLang(usersDto.getLang().toLowerCase())).build());
+                            .replyMarkup(InlineButtons.editeLang("ru")).build());
                     executeMessage(SendMessag.sendM(message.getChatId(),"Перешёл на русский!!",ReplayMarkap.menuRu(message.getChatId().toString())));
                 }
                 usersMap.deleteUser(message.getChatId());
