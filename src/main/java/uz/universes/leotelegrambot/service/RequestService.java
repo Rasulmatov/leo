@@ -58,11 +58,8 @@ private final RequestUrl requestUrl;
                     .header("Accept", "application/json")
                     .build();
             HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (send.statusCode()==200) {
                 verify = objectMapper.readValue(send.body(), Verify.class);
-            }else {
-                log.warn("Verify da xatolik  web Status Cod : "+send.statusCode());
-            }
+
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

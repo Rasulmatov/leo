@@ -42,7 +42,6 @@ public class ControllerBot extends TelegramLongPollingBot {
     private final BonusSave bonusSave;
     private final UsersMap usersMap;
     private final RequestService requestService;
-    List<PhotoSize> list=new LinkedList<>();
     private Message message;
     @Override
     public void onUpdateReceived(Update update) {
@@ -99,7 +98,6 @@ public class ControllerBot extends TelegramLongPollingBot {
                     UsersDto usersDto = regis.getMapUsers(message.getChatId());
                     if (message.getText().length() == 5) {
                        Verify verify = requestService.verifyPhone(CheckSMS.builder().code(message.getText()).phone(usersDto.getPhone()).build());
-
                         if (verify.getSuccess()) {
                             stepUser.setStep(message.getChatId(), Step.REGION);
                             if (usersDto.getLang().equals("uz")) {
@@ -124,80 +122,89 @@ public class ControllerBot extends TelegramLongPollingBot {
                         }
 
                 }
-                }else if (message.getText().equals("Bonus \uD83C\uDF81")) {
-                    if (bonusSave.getBonusStatus(message.getChatId())) {
-                        stepUser.setStep(message.getChatId(), Step.BONUS_COD);
-                        executeMessage(SendMessag.sendM(message.getChatId(), TextUz.bonusCod, ReplayMarkap.cancelUz()));
-                    }else {
-                        executeMessage(SendMessag.sendM(message.getChatId(),"Sizda tekshirilayotgan Promokod bor Admin javobini kuting"));
-                    }
-                }else if (message.getText().equals("Бонус \uD83C\uDF81")) {
-                    if (bonusSave.getBonusStatus(message.getChatId())) {
-                        stepUser.setStep(message.getChatId(),Step.BONUS_COD);
-                        executeMessage(SendMessag.sendM(message.getChatId(),TextRu.bonusCod,ReplayMarkap.cancelRu()));
-                    }else {
-                        executeMessage(SendMessag.sendM(message.getChatId(),"У вас есть подтвержденный промокод. Дождитесь ответа администратора"));
-                    }
+                }
+                if (requestService.checkUser(message.getChatId())) {
+                    if (message.getText().equals("Bonus \uD83C\uDF81")) {
+                        if (bonusSave.getBonusStatus(message.getChatId())) {
+                            stepUser.setStep(message.getChatId(), Step.BONUS_COD);
+                            executeMessage(SendMessag.sendM(message.getChatId(), TextUz.bonusCod, ReplayMarkap.cancelUz()));
+                        } else {
+                            executeMessage(SendMessag.sendM(message.getChatId(), "Sizda tekshirilayotgan Promokod bor Admin javobini kuting"));
+                        }
+                    } else if (message.getText().equals("Бонус \uD83C\uDF81")) {
+                        if (bonusSave.getBonusStatus(message.getChatId())) {
+                            stepUser.setStep(message.getChatId(), Step.BONUS_COD);
+                            executeMessage(SendMessag.sendM(message.getChatId(), TextRu.bonusCod, ReplayMarkap.cancelRu()));
+                        } else {
+                            executeMessage(SendMessag.sendM(message.getChatId(), "У вас есть подтвержденный промокод. Дождитесь ответа администратора"));
+                        }
 
-                } else if (message.getText().equals("Bekor qilish ↪\uFE0F")) {
-                    stepUser.removeStep(message.getChatId());
-                    executeMessage(SendMessag.sendM(message.getChatId(),"Jarayon bekor qilindi",ReplayMarkap.menuUz(message.getChatId().toString())));
-                } else if (message.getText().equals("Отмена ↪\uFE0F")) {
-                    stepUser.removeStep(message.getChatId());
-                    executeMessage(SendMessag.sendM(message.getChatId(),"Процесс отменен",ReplayMarkap.menuRu(message.getChatId().toString())));
-                }else if (!stepUser.getStatus(message.getChatId())&&stepUser.getStep(message.getChatId()).equals(Step.BONUS_COD)){
-                    if (message.getText().length()<=10||isAlphaNumericOnly(message.getText())){
-                        CheckCod cod=requestService.checkCode(message.getText());
-                    if (cod.getSuccess()){
-                        stepUser.setStep(message.getChatId(),Step.SEND_PHOTO);
-                        bonusSave.setBonusMap(message.getChatId(),message);
-                        if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
-                            executeMessage(SendMessag.sendM(message.getChatId(),"Promo Code Muvaffaqiyatli  ✅ \n\n endi 3 tadan kam bolmagan photo yuboring !"));
-                        } else if (usersMap.getUserDto(message.getChatId()).getLang().equals("ru")) {
-                            executeMessage(SendMessag.sendM(message.getChatId(),"Промокод успешен ✅\n" +
-                                    "\n" +
-                                    " Теперь пришлите минимум 3 фотографии!"));
+                    } else if (message.getText().equals("Bekor qilish ↪\uFE0F")) {
+                        stepUser.removeStep(message.getChatId());
+                        executeMessage(SendMessag.sendM(message.getChatId(), "Jarayon bekor qilindi", ReplayMarkap.menuUz(message.getChatId().toString())));
+                    } else if (message.getText().equals("Отмена ↪\uFE0F")) {
+                        stepUser.removeStep(message.getChatId());
+                        executeMessage(SendMessag.sendM(message.getChatId(), "Процесс отменен", ReplayMarkap.menuRu(message.getChatId().toString())));
+                    } else if (!stepUser.getStatus(message.getChatId()) && stepUser.getStep(message.getChatId()).equals(Step.BONUS_COD)) {
+                        if (message.getText().length() <= 10 || isAlphaNumericOnly(message.getText())) {
+                            CheckCod cod = requestService.checkCode(message.getText());
+                            if (cod.getSuccess()) {
+                                stepUser.setStep(message.getChatId(), Step.SEND_PHOTO);
+                                bonusSave.setBonusMap(message.getChatId(), message);
+                                if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
+                                    executeMessage(SendMessag.sendM(message.getChatId(), "Promo Code Muvaffaqiyatli  ✅ \n\n endi 3 tadan kam bolmagan photo yuboring !"));
+                                } else if (usersMap.getUserDto(message.getChatId()).getLang().equals("ru")) {
+                                    executeMessage(SendMessag.sendM(message.getChatId(), "Промокод успешен ✅\n" +
+                                            "\n" +
+                                            " Теперь пришлите минимум 3 фотографии!"));
+                                }
+                            } else {
+                                if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
+                                    executeMessage(SendMessag.sendM(message.getChatId(), cod.getMessage_uz() + "\uD83D\uDEAB"));
+                                } else if (usersMap.getUserDto(message.getChatId()).getLang().equals("ru")) {
+                                    executeMessage(SendMessag.sendM(message.getChatId(), cod.getMessage_ru() + "\uD83D\uDEAB"));
+                                }
+                            }
+                        } else {
+                            if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
+                                executeMessage(SendMessag.sendM(message.getChatId(), "Proma kod mavjud emas \uD83D\uDEAB"));
+                            } else if (usersMap.getUserDto(message.getChatId()).getLang().equals("ru")) {
+                                executeMessage(SendMessag.sendM(message.getChatId(), "Нет доступного промокода \uD83D\uDEAB"));
+                            }
                         }
-                    }else {
-                        if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
-                            executeMessage(SendMessag.sendM(message.getChatId(), cod.getMessage_uz()+"\uD83D\uDEAB"));
-                        } else if (usersMap.getUserDto(message.getChatId()).getLang().equals("ru")) {
-                            executeMessage(SendMessag.sendM(message.getChatId(),cod.getMessage_ru()+"\uD83D\uDEAB"));
-                        }
+                    } else if (message.getText().equals("Связаться с нами \uD83D\uDCDE✉\uFE0F")) {
+                        Info info = requestService.info();
+                        executeMessage(SendMessag.sendM(
+                                message.getChatId(), "Link: " + info.getLink() + "\n" +
+                                        "Phone: \n" + info.getPhones()[0].getPhone() + "\n" + info.getPhones()[1].getPhone()
+                        ));
+                    } else if (message.getText().equals("Biz bilan bog'lanish \uD83D\uDCDE✉\uFE0F")) {
+                        Info info = requestService.info();
+                        executeMessage(SendMessag.sendM(
+                                message.getChatId(), "Link: " + info.getLink() + "\n" +
+                                        "Phone: \n" + info.getPhones()[0].getPhone() + "\n" + info.getPhones()[1].getPhone()
+                        ));
+                    } else if (message.getText().equals("Мой аккаунт \uD83D\uDC64")) {
+                        UsersDto usersDto = requestService.getUsers(message.getChatId());
+                        executeMessage(SendMessag.sendM(message.getChatId(), String.format(TextRu.myInfo, usersDto.getPoint(),
+                                usersDto.getName(),
+                                usersDto.getPhone(),
+                                usersDto.getRegion(),
+                                usersDto.getLang().toUpperCase()), InlineButtons.editeLang(usersDto.getLang().toLowerCase())));
+                    } else if (message.getText().equals("Mening Akkauntim \uD83D\uDC64")) {
+                        UsersDto usersDto = requestService.getUsers(message.getChatId());
+                        executeMessage(SendMessag.sendM(message.getChatId(), String.format(TextUz.myInfo, usersDto.getPoint(),
+                                usersDto.getName(),
+                                usersDto.getPhone(),
+                                usersDto.getRegion(),
+                                usersDto.getLang().toUpperCase()), InlineButtons.editeLang(usersDto.getLang().toLowerCase())));
                     }
-                    }else {
-                        if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
-                            executeMessage(SendMessag.sendM(message.getChatId(), "Proma kod mavjud emas \uD83D\uDEAB"));
-                        } else if (usersMap.getUserDto(message.getChatId()).getLang().equals("ru")) {
-                            executeMessage(SendMessag.sendM(message.getChatId(),"Нет доступного промокода \uD83D\uDEAB"));
-                        }
+                }else {
+                    if (!message.getText().equals("/start")&&stepUser.getStatus(message.getChatId())) {
+                        stepUser.setStep(message.getChatId(), Step.LANG);
+                        executeMessage(SendMessag.sendM(message.getChatId(),RegisTextUz.reset + "\n\n" + RegisTextRu.reset,ReplayMarkap.removeKeyboard()));
+                        executeMessage(SendMessag.sendM(message.getChatId(), TextUz.start + "\n" + TextRu.start, InlineButtons.lan()));
                     }
-                } else if (message.getText().equals("Связаться с нами \uD83D\uDCDE✉\uFE0F")) {
-                    Info info= requestService.info();
-                    executeMessage(SendMessag.sendM(
-                            message.getChatId(),"Link: "+info.getLink() +"\n" +
-                                    "Phone: \n"+info.getPhones()[0].getPhone()+"\n"+info.getPhones()[1].getPhone()
-                    ));
-                }else if (message.getText().equals("Biz bilan bog'lanish \uD83D\uDCDE✉\uFE0F")){
-                    Info info= requestService.info();
-                    executeMessage(SendMessag.sendM(
-                            message.getChatId(),"Link: "+info.getLink() +"\n" +
-                                    "Phone: \n"+info.getPhones()[0].getPhone()+"\n"+info.getPhones()[1].getPhone()
-                    ));
-                } else if (message.getText().equals("Мой аккаунт \uD83D\uDC64")) {
-                    UsersDto usersDto=requestService.getUsers(message.getChatId());
-                    executeMessage(SendMessag.sendM(message.getChatId(),String.format(TextRu.myInfo,usersDto.getPoint(),
-                            usersDto.getName(),
-                            usersDto.getPhone(),
-                            usersDto.getRegion(),
-                            usersDto.getLang().toUpperCase()),InlineButtons.editeLang(usersDto.getLang().toLowerCase())));
-                }else if (message.getText().equals("Mening Akkauntim \uD83D\uDC64")){
-                    UsersDto usersDto=requestService.getUsers(message.getChatId());
-                    executeMessage(SendMessag.sendM(message.getChatId(),String.format(TextUz.myInfo,usersDto.getPoint(),
-                            usersDto.getName(),
-                            usersDto.getPhone(),
-                            usersDto.getRegion(),
-                            usersDto.getLang().toUpperCase()),InlineButtons.editeLang(usersDto.getLang().toLowerCase())));
                 }
             } else if (message.hasContact()) {
                 stepUser.setStep(message.getChatId(),Step.CHECK);
@@ -293,7 +300,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                         .build());
                 if (usersDto.getLang().equals("uz")) {
                     executeMessage(SendMessage.builder()
-                            .text("Ma'lumotlar saqlandi ✅")
+                            .text("Ma'lumotlar saqlandi ✅\n \n"+RegisTextUz.menu)
                             .chatId(message.getChatId())
                             .replyMarkup(ReplayMarkap.menuUz(message.getChatId().toString()))
                             .parseMode(ParseMode.HTML)
@@ -301,7 +308,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                     );
                 } else if (usersDto.getLang().equals("ru")) {
                     executeMessage(SendMessage.builder()
-                            .text("Данные сохранены ✅")
+                            .text("Данные сохранены ✅\n \n"+RegisTextRu.menu)
                             .chatId(message.getChatId())
                             .replyMarkup(ReplayMarkap.menuRu(message.getChatId().toString()))
                             .parseMode(ParseMode.HTML)
