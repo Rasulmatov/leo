@@ -173,16 +173,23 @@ public class ControllerBot extends TelegramLongPollingBot {
                             }
                         }
                     } else if (message.getText().equals("Связаться с нами \uD83D\uDCDE✉\uFE0F")) {
-                        Info info = requestService.info();
+                        Info info = requestService.info();StringBuilder b=new StringBuilder();
+                        for (Phone p:info.getPhones()){
+                            b.append(p.getPhone()+"\n");
+                        }
                         executeMessage(SendMessag.sendM(
                                 message.getChatId(), "Link: " + info.getLink() + "\n" +
-                                        "Phone: \n" + info.getPhones()[0].getPhone() + "\n" + info.getPhones()[1].getPhone()
+                                        "Phone: \n" + b
                         ));
                     } else if (message.getText().equals("Biz bilan bog'lanish \uD83D\uDCDE✉\uFE0F")) {
                         Info info = requestService.info();
+                       StringBuilder b=new StringBuilder();
+                        for (Phone p:info.getPhones()){
+                            b.append(p.getPhone()+"\n");
+                        }
                         executeMessage(SendMessag.sendM(
                                 message.getChatId(), "Link: " + info.getLink() + "\n" +
-                                        "Phone: \n" + info.getPhones()[0].getPhone() + "\n" + info.getPhones()[1].getPhone()
+                                        "Phone: \n" + b
                         ));
                     } else if (message.getText().equals("Мой аккаунт \uD83D\uDC64")) {
                         UsersDto usersDto = requestService.getUsers(message.getChatId());
