@@ -278,7 +278,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                 usersDto.setRegion(update.getCallbackQuery().getData().split("_")[0]);
                 if (usersDto.getLang().equals("uz")) {
                     executeMessage(EditMessageText.builder()
-                            .text(String.format(RegisTextUz.infoUser, usersDto.getName(), usersDto.getPhone(), update.getCallbackQuery().getData().split("_")[1], usersDto.getLang().toUpperCase()))
+                            .text(String.format(RegisTextUz.infoUser, usersDto.getName(), usersDto.getPhone(), update.getCallbackQuery().getData().split("_")[1], usersDto.getLang().toUpperCase())+"\n\n\n"+RegisTextUz.menu)
                             .chatId(message.getChatId())
                             .messageId(message.getMessageId())
                             .parseMode(ParseMode.HTML)
@@ -287,7 +287,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                     );
                 } else if (usersDto.getLang().equals("ru")) {
                     executeMessage(EditMessageText.builder()
-                            .text(String.format(RegisTextRu.infoUser, usersDto.getName(), usersDto.getPhone(), update.getCallbackQuery().getData().split("_")[1], usersDto.getLang().toUpperCase()))
+                            .text(String.format(RegisTextRu.infoUser, usersDto.getName(), usersDto.getPhone(), update.getCallbackQuery().getData().split("_")[1], usersDto.getLang().toUpperCase())+"\n\n\n"+RegisTextRu.menu)
                             .chatId(message.getChatId())
                             .messageId(message.getMessageId())
                             .parseMode(ParseMode.HTML)
@@ -307,7 +307,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                         .build());
                 if (usersDto.getLang().equals("uz")) {
                     executeMessage(SendMessage.builder()
-                            .text("Ma'lumotlar saqlandi ✅\n \n"+RegisTextUz.menu)
+                            .text("Ma'lumotlar saqlandi ✅")
                             .chatId(message.getChatId())
                             .replyMarkup(ReplayMarkap.menuUz(message.getChatId().toString()))
                             .parseMode(ParseMode.HTML)
@@ -315,7 +315,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                     );
                 } else if (usersDto.getLang().equals("ru")) {
                     executeMessage(SendMessage.builder()
-                            .text("Данные сохранены ✅\n \n"+RegisTextRu.menu)
+                            .text("Данные сохранены ✅")
                             .chatId(message.getChatId())
                             .replyMarkup(ReplayMarkap.menuRu(message.getChatId().toString()))
                             .parseMode(ParseMode.HTML)
