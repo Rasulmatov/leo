@@ -184,13 +184,33 @@ private final RequestUrl requestUrl;
         return regions;
     }
 
+    public UsersDto getUsers(Long chatId,String url){
+        ObjectMapper objectMapper=new ObjectMapper();
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(new URI(url+chatId.toString()+"/"))
+                    .header("Accept", "application/json")
+                    .build();
+            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
+            UsersDto usersDto=objectMapper.readValue(send.body(),UsersDto.class);
+            return usersDto;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public UsersDto getUsers(Long chatId){
         ObjectMapper objectMapper=new ObjectMapper();
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .GET()
-                    .uri(new URI(requestUrl.getGetUser().toString()+chatId.toString()+"/"))
+                    .uri(new URI(requestUrl.getGetUserUz().toString()+chatId.toString()+"/"))
                     .header("Accept", "application/json")
                     .build();
             HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());

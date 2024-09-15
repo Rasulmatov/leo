@@ -13,5 +13,5 @@ public class UserEntity {
         private String phone;
         private Integer region;
         private String lang;
-        private Integer point;
+        private Integer summa;
 }

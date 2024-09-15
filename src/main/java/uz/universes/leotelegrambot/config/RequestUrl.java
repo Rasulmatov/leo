@@ -19,8 +19,12 @@ public class RequestUrl {
     private URI checkUser;
     @Value("${web.saveUser}")
     private URI saveUser;
+
     @Value("${web.getUser}")
-    private URI getUser;
+    private URI getUserUz;
+    @Value("${web.getUserRu}")
+    private URI getUserRU;
+
     @Value("${web.regions}")
     private URI regions;
     @Value("${web.checkCode}")

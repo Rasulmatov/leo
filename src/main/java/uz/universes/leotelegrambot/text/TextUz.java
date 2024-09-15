@@ -7,7 +7,7 @@ public interface TextUz {
     String checkGroupPhoto="Buni tastiqlaysizmi? \n Agarda Mizojga qayer xatolik qayerda " +
             "ekanligini tushuntirmoqchi bo'lsangiz Replay ⤴\uFE0F qilib yozasiz shunda mijozga message yuborasiz";
 
-    String myInfo="\uD83D\uDCB0 <b>Bonus</b> : %s \n \uD83D\uDC64 <b>Ism</b> : %s \n" +
+    String myInfo="\uD83D\uDCB0 <b>Bonus</b> : %s so'm \n \uD83D\uDC64 <b>Ism</b> : %s \n" +
             "\uD83D\uDCDE <b>Tel</b> : %s \n" +
             "\uD83C\uDFE0 <b>Joylashuv</b> : %s\n" +
             "\uD83C\uDFF3<b>Til</b> : %s";

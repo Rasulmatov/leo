@@ -18,6 +18,7 @@ import uz.universes.leotelegrambot.Model.*;
 import uz.universes.leotelegrambot.button.inlline.InlineButtons;
 import uz.universes.leotelegrambot.button.replayKeyBoard.ReplayMarkap;
 import uz.universes.leotelegrambot.config.Config;
+import uz.universes.leotelegrambot.config.RequestUrl;
 import uz.universes.leotelegrambot.map.BonusSave;
 import uz.universes.leotelegrambot.map.Regis;
 import uz.universes.leotelegrambot.map.StepUser;
@@ -42,6 +43,7 @@ public class ControllerBot extends TelegramLongPollingBot {
     private final BonusSave bonusSave;
     private final UsersMap usersMap;
     private final RequestService requestService;
+    private final RequestUrl requestUrl;
     private Message message;
     @Override
     public void onUpdateReceived(Update update) {
@@ -192,15 +194,15 @@ public class ControllerBot extends TelegramLongPollingBot {
                                         "Phone: \n" + b
                         ));
                     } else if (message.getText().equals("Мой аккаунт \uD83D\uDC64")) {
-                        UsersDto usersDto = requestService.getUsers(message.getChatId());
-                        executeMessage(SendMessag.sendM(message.getChatId(), String.format(TextRu.myInfo, usersDto.getPoint(),
+                        UsersDto usersDto = requestService.getUsers(message.getChatId(),requestUrl.getGetUserRU().toString());
+                        executeMessage(SendMessag.sendM(message.getChatId(), String.format(TextRu.myInfo, usersDto.getSumma(),
                                 usersDto.getName(),
                                 usersDto.getPhone(),
                                 usersDto.getRegion(),
                                 usersDto.getLang().toUpperCase()), InlineButtons.editeLang(usersDto.getLang().toLowerCase())));
                     } else if (message.getText().equals("Mening Akkauntim \uD83D\uDC64")) {
-                        UsersDto usersDto = requestService.getUsers(message.getChatId());
-                        executeMessage(SendMessag.sendM(message.getChatId(), String.format(TextUz.myInfo, usersDto.getPoint(),
+                        UsersDto usersDto = requestService.getUsers(message.getChatId(),requestUrl.getGetUserUz().toString());
+                        executeMessage(SendMessag.sendM(message.getChatId(), String.format(TextUz.myInfo, usersDto.getSumma(),
                                 usersDto.getName(),
                                 usersDto.getPhone(),
                                 usersDto.getRegion(),
@@ -371,7 +373,12 @@ public class ControllerBot extends TelegramLongPollingBot {
                     );
                 }
             } else if (!stepUser.getStatus(message.getChatId())&&stepUser.getStep(message.getChatId()).equals(Step.EDITE_LANG)) {
-                UsersDto usersDto=requestService.getUsers(message.getChatId());
+                UsersDto usersDto=null;
+                if (update.getCallbackQuery().getData().equals("uz")) {
+                    usersDto = requestService.getUsers(message.getChatId(),requestUrl.getGetUserUz().toString() );
+                } else if (update.getCallbackQuery().getData().equals("ru")) {
+                    usersDto = requestService.getUsers(message.getChatId(),requestUrl.getGetUserRU().toString() );
+                }
                 stepUser.removeStep(message.getChatId());
                 requestService.patchUser(message.getChatId(),UserPatch.builder()
                                 .name(usersDto.getName())
@@ -381,7 +388,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                                 .region(1)
                         .build());
                 if (update.getCallbackQuery().getData().equals("uz")) {
-                    executeMessage(EditMessageText.builder().text(String.format(TextUz.myInfo, usersDto.getPoint(),
+                    executeMessage(EditMessageText.builder().text(String.format(TextUz.myInfo, usersDto.getSumma(),
                                     usersDto.getName(),
                                     usersDto.getPhone(),
                                     usersDto.getRegion(),
@@ -392,7 +399,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                             .replyMarkup(InlineButtons.editeLang("uz")).build());
                     executeMessage(SendMessag.sendM(message.getChatId(),"O'zbek tiliga o'tildi !! ",ReplayMarkap.menuUz(message.getChatId().toString())));
                 } else if (update.getCallbackQuery().getData().equals("ru")) {
-                    executeMessage(EditMessageText.builder().text(String.format(TextRu.myInfo, usersDto.getPoint(),
+                    executeMessage(EditMessageText.builder().text(String.format(TextRu.myInfo, usersDto.getSumma(),
                                     usersDto.getName(),
                                     usersDto.getPhone(),
                                     usersDto.getRegion(),

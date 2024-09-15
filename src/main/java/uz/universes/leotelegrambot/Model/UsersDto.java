@@ -14,5 +14,5 @@ public class UsersDto {
     private String phone;
     private String region;
     private String lang;
-    private Integer point;
+    private Integer summa;
 }
