@@ -36,4 +36,9 @@ public class RequestUrl {
     @Value("${web.bonusSave}")
     private URI bonusSave;
 
+    @Value("${web.katologUz}")
+    public  URI katologUz;
+    @Value("${web.katologRu}")
+    public  URI katologRu;
+
 }

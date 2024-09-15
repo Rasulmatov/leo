@@ -1,9 +1,9 @@
 package uz.universes.leotelegrambot.button.replayKeyBoard;
 
+
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButtonPollType;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo;
 
@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReplayMarkap {
+    static String  webUz="https://leobonus.uz/api/v1/?lang=ru&chat_id=";
+    static String webRu="https://leobonus.uz/api/v1/?lang=uz&chat_id=";
+
     public static ReplyKeyboardMarkup contactUz(){
         ReplyKeyboardMarkup reply=new ReplyKeyboardMarkup();
         reply.setResizeKeyboard(true);
@@ -45,7 +48,7 @@ public class ReplayMarkap {
         one.add(KeyboardButton.builder().text("Bonus \uD83C\uDF81").build());
         KeyboardRow two=new KeyboardRow();
         WebAppInfo webAppInfo=new WebAppInfo();
-        webAppInfo.setUrl("https://leo.ravshandev.uz/api/v1/?lang=uz&chat_id="+chatId);
+        webAppInfo.setUrl(webUz+chatId);
         two.add(KeyboardButton.builder().text("Katalog \uD83D\uDECD").webApp(webAppInfo).build());
         KeyboardRow three=new KeyboardRow();
         three.add(KeyboardButton.builder().text("Mening Akkauntim \uD83D\uDC64").build());
@@ -64,7 +67,7 @@ public class ReplayMarkap {
         one.add(KeyboardButton.builder().text("Бонус \uD83C\uDF81").build());
         KeyboardRow two=new KeyboardRow();
         WebAppInfo webAppInfo=new WebAppInfo();
-        webAppInfo.setUrl("https://leo.ravshandev.uz/api/v1/?lang=ru&chat_id="+chatId);
+        webAppInfo.setUrl(webRu+chatId);
         two.add(KeyboardButton.builder().text("Каталог \uD83D\uDECD").webApp(webAppInfo).build());
         KeyboardRow three=new KeyboardRow();
         three.add(KeyboardButton.builder().text("Мой аккаунт \uD83D\uDC64").build());
