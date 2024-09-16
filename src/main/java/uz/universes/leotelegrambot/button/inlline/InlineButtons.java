@@ -23,7 +23,7 @@ public class InlineButtons {
         InlineKeyboardMarkup inlineKeyboardMarkup=new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> lists=new ArrayList<>();
         List<InlineKeyboardButton> lan=new ArrayList<>();
-        lan.add(InlineKeyboardButton.builder().text("Tastiqlash ✅").callbackData("SAVE_").build());
+        lan.add(InlineKeyboardButton.builder().text("Tasdiqlash ✅").callbackData("SAVE_").build());
         lists.add(lan);
         inlineKeyboardMarkup.setKeyboard(lists);
         return inlineKeyboardMarkup;
@@ -34,7 +34,7 @@ public class InlineButtons {
         List<InlineKeyboardButton> conf=new ArrayList<>();
         List<InlineKeyboardButton> cancel=new ArrayList<>();
         if (lang.equals("uz")) {
-            conf.add(InlineKeyboardButton.builder().text("Tastiqlash ✅").callbackData("SAVE_PHOTO_"+chatId).build());
+            conf.add(InlineKeyboardButton.builder().text("Tasdiqlash ✅").callbackData("SAVE_PHOTO_"+chatId).build());
             cancel.add(InlineKeyboardButton.builder().text("Bonusni bekor qilish ❌").callbackData("NOTSAVE_PHOTO_"+chatId).build());
         } else if (lang.equals("ru")) {
             conf.add(InlineKeyboardButton.builder().text("Подтверждение ✅").callbackData("SAVE_PHOTO_"+chatId).build());

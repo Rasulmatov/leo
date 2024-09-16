@@ -334,7 +334,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                }
                 executeMessage(EditMessageText.builder().text("✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅✅\n" +
                         "#config #"+bonusSave.getBonusSize(chatId).get(0).getText()+"" +
-                        "\nTastiqladi: "+update.getCallbackQuery().getFrom().getFirstName()+" "+update.getCallbackQuery().getFrom().getLastName() +"" +
+                        "\nTasdiqladi: "+update.getCallbackQuery().getFrom().getFirstName()+" "+update.getCallbackQuery().getFrom().getLastName() +"" +
                         "\nMijoz: "+usersMap.getUserDto(chatId).getName()+"" +
                         "\nchatId: #"+chatId).messageId(message.getMessageId()).chatId(message.getChatId()).build());
                 bonusSave.deleteBonus(chatId);
