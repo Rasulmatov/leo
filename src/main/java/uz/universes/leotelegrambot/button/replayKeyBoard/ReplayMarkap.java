@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReplayMarkap {
-    static String  webUz="https://leobonus.uz/api/v1/?lang=ru&chat_id=";
-    static String webRu="https://leobonus.uz/api/v1/?lang=uz&chat_id=";
+    //static String  webUz="https://leobonus.uz/api/v1/?lang=ru&chat_id=";
+    static String  webUz="https://web-app.leobonus.uz/?lang=uz&chatId=";
+    //static String webRu="https://leobonus.uz/api/v1/?lang=uz&chat_id=";
+    static String webRu="https://web-app.leobonus.uz/?lang=ru&chatId=";
 
     public static ReplyKeyboardMarkup contactUz(){
         ReplyKeyboardMarkup reply=new ReplyKeyboardMarkup();
