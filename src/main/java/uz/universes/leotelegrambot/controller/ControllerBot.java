@@ -247,10 +247,11 @@ public class ControllerBot extends TelegramLongPollingBot {
                     }
                     SendMessage sendPhoto=new SendMessage();
                     sendPhoto.setChatId(-1002157490414L);
+                    sendPhoto.setParseMode(ParseMode.HTML);
                     sendPhoto.setReplyMarkup(InlineButtons.checkGroupPhoto(usersMap.getUserDto(message.getChatId()).getLang(),photoList.get(0).getChatId().toString()));
                     stepUser.removeStep(message.getChatId());
                     if (usersMap.getUserDto(photoList.get(0).getChatId()).getLang().equals("uz")) {
-                        sendPhoto.setText(TextUz.checkGroupPhoto);
+                        sendPhoto.setText(String.format(String.format(TextUz.checkGroupPhoto,bonusSave.getBonusSize(message.getChatId()).get(0).getText()),bonusSave.getBonusSize(message.getChatId()).get(0).getText()));
                         executeMessage(SendMessag.sendM(photoList.get(0).getChatId(), "Admin javobini kuting!", ReplayMarkap.menuUz(message.getChatId().toString())));
 
                     }else if (usersMap.getUserDto(photoList.get(0).getChatId()).getLang().equals("ru")){
