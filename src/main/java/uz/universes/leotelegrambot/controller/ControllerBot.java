@@ -49,7 +49,7 @@ public class ControllerBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()){
             this.message=update.getMessage();
-            if (message.getChatId().equals(-1002157490414L)&&message.getReplyToMessage().getForwardFrom()!=null) {
+            if (message.getChatId().equals(-4598767064L)&&message.getReplyToMessage().getForwardFrom()!=null) {
                 executeMessage(CopyMessage.builder()
                         .messageId(message.getMessageId())
                         .fromChatId(message.getChatId())
@@ -238,7 +238,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                         ForwardMessage forwardMessage=new ForwardMessage();
                         forwardMessage.setMessageId(photoList.get(i).getMessageId());
                         forwardMessage.setFromChatId(photoList.get(i).getChatId());
-                        forwardMessage.setChatId(-1002157490414L);
+                        forwardMessage.setChatId(-4598767064L);
                         try {
                             execute(forwardMessage);
                         } catch (TelegramApiException e) {
@@ -246,7 +246,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                         }
                     }
                     SendMessage sendPhoto=new SendMessage();
-                    sendPhoto.setChatId(-1002157490414L);
+                    sendPhoto.setChatId(-4598767064L);
                     sendPhoto.setParseMode(ParseMode.HTML);
                     sendPhoto.setReplyMarkup(InlineButtons.checkGroupPhoto(usersMap.getUserDto(message.getChatId()).getLang(),photoList.get(0).getChatId().toString()));
                     stepUser.removeStep(message.getChatId());

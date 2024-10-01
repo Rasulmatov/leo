@@ -68,6 +68,7 @@ public class InlineButtons {
         return inlineKeyboardMarkup;
     }
     public static ReplyKeyboard region(List<Region> regions, String lang){
+        System.out.println(regions.toString());
         InlineKeyboardMarkup inline=new InlineKeyboardMarkup();
         List<InlineKeyboardButton> list=null;
         List<List<InlineKeyboardButton>> lists=new ArrayList<>();
