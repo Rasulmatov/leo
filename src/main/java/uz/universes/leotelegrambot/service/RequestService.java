@@ -3,11 +3,8 @@ package uz.universes.leotelegrambot.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.juli.VerbatimFormatter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uz.universes.leotelegrambot.Model.*;
@@ -145,7 +142,7 @@ private final RequestUrl requestUrl;
         }
 
     }
-    public void patchUser(Long chatid , UserPatch entity) {
+    public void patchUser(Long chatid , UserPatchLang entity) {
         ObjectMapper objectMapper=new ObjectMapper();
         try {
             String json=objectMapper.writeValueAsString(entity);

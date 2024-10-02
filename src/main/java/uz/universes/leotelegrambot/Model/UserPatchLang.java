@@ -7,10 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class UserPatch {
-        private String chat_id;
-        private String name;
-        private String phone;
-        private Integer region;
+public class UserPatchLang {
         private String lang;
     }

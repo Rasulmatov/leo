@@ -11,7 +11,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import uz.universes.leotelegrambot.Model.*;
@@ -31,7 +30,6 @@ import uz.universes.leotelegrambot.text.regis.RegisTextRu;
 import uz.universes.leotelegrambot.text.regis.RegisTextUz;
 import uz.universes.leotelegrambot.utils.Step;
 
-import java.util.LinkedList;
 import java.util.List;
 
 @Component
@@ -142,6 +140,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                         }
 
                     } else if (message.getText().equals("Bekor qilish ↪\uFE0F")) {
+                        bonusSave.deleteBonus(message.getChatId());
                         stepUser.removeStep(message.getChatId());
                         executeMessage(SendMessag.sendM(message.getChatId(), "Jarayon bekor qilindi", ReplayMarkap.menuUz(message.getChatId().toString())));
                     } else if (message.getText().equals("Отмена ↪\uFE0F")) {
@@ -154,7 +153,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                                 stepUser.setStep(message.getChatId(), Step.SEND_PHOTO);
                                 bonusSave.setBonusMap(message.getChatId(), message);
                                 if (usersMap.getUserDto(message.getChatId()).getLang().equals("uz")) {
-                                    executeMessage(SendMessag.sendM(message.getChatId(), "Promo Code Muvaffaqiyatli  ✅ \n\n endi 3 tadan kam bolmagan photo yuboring !"));
+                                    executeMessage(SendMessag.sendM(message.getChatId(), "Promo Code Muvaffaqiyatli  ✅ \n\n endi 3 tadan kam bo'lmagan photo yuboring !"));
                                 } else if (usersMap.getUserDto(message.getChatId()).getLang().equals("ru")) {
                                     executeMessage(SendMessag.sendM(message.getChatId(), "Промокод успешен ✅\n" +
                                             "\n" +
@@ -253,7 +252,6 @@ public class ControllerBot extends TelegramLongPollingBot {
                     if (usersMap.getUserDto(photoList.get(0).getChatId()).getLang().equals("uz")) {
                         sendPhoto.setText(String.format(String.format(TextUz.checkGroupPhoto,bonusSave.getBonusSize(message.getChatId()).get(0).getText()),bonusSave.getBonusSize(message.getChatId()).get(0).getText()));
                         executeMessage(SendMessag.sendM(photoList.get(0).getChatId(), "Admin javobini kuting!", ReplayMarkap.menuUz(message.getChatId().toString())));
-
                     }else if (usersMap.getUserDto(photoList.get(0).getChatId()).getLang().equals("ru")){
                         sendPhoto.setText(TextRu.checkGroupPhoto);
                         executeMessage(SendMessag.sendM(photoList.get(0).getChatId(), "Ждите ответа администратора!", ReplayMarkap.menuRu(message.getChatId().toString())));
@@ -381,12 +379,8 @@ public class ControllerBot extends TelegramLongPollingBot {
                     usersDto = requestService.getUsers(message.getChatId(),requestUrl.getGetUserRU().toString() );
                 }
                 stepUser.removeStep(message.getChatId());
-                requestService.patchUser(message.getChatId(),UserPatch.builder()
-                                .name(usersDto.getName())
-                                .chat_id(usersDto.getChat_id())
+                requestService.patchUser(message.getChatId(), UserPatchLang.builder()
                                 .lang(update.getCallbackQuery().getData())
-                                .phone(usersDto.getPhone())
-                                .region(1)
                         .build());
                 if (update.getCallbackQuery().getData().equals("uz")) {
                     executeMessage(EditMessageText.builder().text(String.format(TextUz.myInfo, usersDto.getSumma(),
