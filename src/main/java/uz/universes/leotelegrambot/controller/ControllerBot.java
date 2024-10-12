@@ -42,16 +42,17 @@ public class ControllerBot extends TelegramLongPollingBot {
     private final UsersMap usersMap;
     private final RequestService requestService;
     private final RequestUrl requestUrl;
+   private Long groupId=-1002267835441L;
     private Message message;
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()){
             this.message=update.getMessage();
-            if (message.getChatId().equals(-4598767064L)&&message.getReplyToMessage().getForwardFrom()!=null) {
+            if (message.getChatId().equals(groupId)&&message.getFrom()!=null) {
                 executeMessage(CopyMessage.builder()
                         .messageId(message.getMessageId())
                         .fromChatId(message.getChatId())
-                        .chatId(message.getReplyToMessage().getForwardFrom().getId())
+                        .chatId(message.getFrom().getId())
                         .build()
                 );
             }else if (message.hasText()){
@@ -237,7 +238,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                         ForwardMessage forwardMessage=new ForwardMessage();
                         forwardMessage.setMessageId(photoList.get(i).getMessageId());
                         forwardMessage.setFromChatId(photoList.get(i).getChatId());
-                        forwardMessage.setChatId(-4598767064L);
+                        forwardMessage.setChatId(groupId);
                         try {
                             execute(forwardMessage);
                         } catch (TelegramApiException e) {
@@ -245,7 +246,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                         }
                     }
                     SendMessage sendPhoto=new SendMessage();
-                    sendPhoto.setChatId(-4598767064L);
+                    sendPhoto.setChatId(groupId);
                     sendPhoto.setParseMode(ParseMode.HTML);
                     sendPhoto.setReplyMarkup(InlineButtons.checkGroupPhoto(usersMap.getUserDto(message.getChatId()).getLang(),photoList.get(0).getChatId().toString()));
                     stepUser.removeStep(message.getChatId());
