@@ -19,3 +19,4 @@ jobs:
           docker stop leo_bot || true
           docker rm leo_bot || true
           docker run --restart unless-stopped --name leo_bot -d leo_bot
+          docker image prune -y

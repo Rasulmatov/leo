@@ -48,11 +48,11 @@ public class ControllerBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()){
             this.message=update.getMessage();
-            if (message.getChatId().equals(groupId)&&message.getFrom()!=null) {
+            if (message.getChatId().equals(groupId)&&message.getReplyToMessage().getForwardFrom()!=null) {
                 executeMessage(CopyMessage.builder()
                         .messageId(message.getMessageId())
                         .fromChatId(message.getChatId())
-                        .chatId(message.getFrom().getId())
+                        .chatId(message.getReplyToMessage().getForwardFrom().getId())
                         .build()
                 );
             }else if (message.hasText()){
