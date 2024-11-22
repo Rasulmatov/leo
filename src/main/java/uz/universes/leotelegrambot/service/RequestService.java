@@ -142,6 +142,33 @@ private final RequestUrl requestUrl;
         }
 
     }
+
+    public void helpSave(Help help) {
+        ObjectMapper objectMapper=new ObjectMapper();
+        try {
+            String json=objectMapper.writeValueAsString(help);
+            HttpClient client=HttpClient.newHttpClient();
+            HttpRequest request= HttpRequest.newBuilder()
+                    .POST(HttpRequest.BodyPublishers.ofString(json))
+                    .header("Content-Type","application/json")
+                    .uri(new URI(requestUrl.help.toString()+help.getId()+"/"))
+                    .build();
+            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (send.statusCode()!=200){
+                log.warn("Save bolishda xatolik statusCod: "+send.statusCode());
+            }
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
     public void patchUser(Long chatid , UserPatchLang entity) {
         ObjectMapper objectMapper=new ObjectMapper();
         try {
@@ -193,6 +220,26 @@ private final RequestUrl requestUrl;
             HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
             UsersDto usersDto=objectMapper.readValue(send.body(),UsersDto.class);
             return usersDto;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public Help getHelp(Integer id){
+        ObjectMapper objectMapper=new ObjectMapper();
+        try {
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .GET()
+                    .uri(new URI(requestUrl.help.toString()+id+"/"))
+                    .header("Accept", "application/json")
+                    .build();
+            HttpResponse<String> send = client.send(request, HttpResponse.BodyHandlers.ofString());
+            Help help=objectMapper.readValue(send.body(),Help.class);
+            return help;
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {

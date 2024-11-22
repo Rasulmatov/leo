@@ -53,11 +53,14 @@ public class ReplayMarkap {
         webAppInfo.setUrl(webUz+chatId);
         two.add(KeyboardButton.builder().text("Katalog \uD83D\uDECD").webApp(webAppInfo).build());
         KeyboardRow three=new KeyboardRow();
+        KeyboardRow fo=new KeyboardRow();
+        fo.add(KeyboardButton.builder().text("Qo'llanma \uD83D\uDCD2").build());
         three.add(KeyboardButton.builder().text("Mening Akkauntim \uD83D\uDC64").build());
         three.add(KeyboardButton.builder().text("Biz bilan bog'lanish \uD83D\uDCDE✉\uFE0F").build());
         list.add(one);
         list.add(two);
         list.add(three);
+        list.add(fo);
         reply.setKeyboard(list);
         return reply;
     }
@@ -72,11 +75,14 @@ public class ReplayMarkap {
         webAppInfo.setUrl(webRu+chatId);
         two.add(KeyboardButton.builder().text("Каталог \uD83D\uDECD").webApp(webAppInfo).build());
         KeyboardRow three=new KeyboardRow();
+        KeyboardRow fo=new KeyboardRow();
+        fo.add(KeyboardButton.builder().text("Руководство \uD83D\uDCD2").build());
         three.add(KeyboardButton.builder().text("Мой аккаунт \uD83D\uDC64").build());
         three.add(KeyboardButton.builder().text("Связаться с нами \uD83D\uDCDE✉\uFE0F").build());
         list.add(one);
         list.add(two);
         list.add(three);
+        list.add(fo);
         reply.setKeyboard(list);
         return reply;
     }
@@ -99,6 +105,26 @@ public class ReplayMarkap {
         one.add(cancel);
         reply.setKeyboard(one);
         return  reply;
+    }
+    public static ReplyKeyboardMarkup helpRu(){
+        ReplyKeyboardMarkup reply=new ReplyKeyboardMarkup();
+        reply.setResizeKeyboard(true);
+        List<KeyboardRow> one=new ArrayList<>();
+        KeyboardRow cancel=new KeyboardRow();
+        cancel.add(KeyboardButton.builder().text("Руководство \uD83D\uDCD2").build());
+        one.add(cancel);
+        reply.setKeyboard(one);
+        return  reply;
+    }
+    public static ReplyKeyboardMarkup helpUz(){
+        ReplyKeyboardMarkup helpUz=new ReplyKeyboardMarkup();
+        helpUz.setResizeKeyboard(true);
+        List<KeyboardRow> one=new ArrayList<>();
+        KeyboardRow cancel=new KeyboardRow();
+        cancel.add(KeyboardButton.builder().text("Qo'llanma \uD83D\uDCD2").build());
+        one.add(cancel);
+        helpUz.setKeyboard(one);
+        return  helpUz;
     }
     public static ReplyKeyboardRemove removeKeyboard(){
         return new ReplyKeyboardRemove(true);

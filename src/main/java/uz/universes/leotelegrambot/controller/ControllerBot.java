@@ -7,9 +7,13 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.CopyMessage;
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendVideo;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -29,8 +33,11 @@ import uz.universes.leotelegrambot.text.TextUz;
 import uz.universes.leotelegrambot.text.regis.RegisTextRu;
 import uz.universes.leotelegrambot.text.regis.RegisTextUz;
 import uz.universes.leotelegrambot.utils.Step;
+import uz.universes.leotelegrambot.utils.TypeMessage;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
@@ -144,6 +151,56 @@ public class ControllerBot extends TelegramLongPollingBot {
                         bonusSave.deleteBonus(message.getChatId());
                         stepUser.removeStep(message.getChatId());
                         executeMessage(SendMessag.sendM(message.getChatId(), "Jarayon bekor qilindi", ReplayMarkap.menuUz(message.getChatId().toString())));
+                    } else if (message.getText().equals("Руководство \uD83D\uDCD2")) {
+                        Help help=requestService.getHelp(2);
+                        if (help!=null){
+                            if (help.getMessage_type().equals(TypeMessage.VIDEO.toString())){
+                                executeMessage(SendVideo.builder()
+                                        .video(new InputFile(help.getFile_id()))
+                                        .caption(help.getMessage_text())
+                                        .chatId(message.getChatId())
+                                        .build()
+                                );
+                            } else if (help.getMessage_type().equals(TypeMessage.PHOTO.toString())) {
+                                executeMessage(SendPhoto.builder()
+                                        .photo(new InputFile(help.getFile_id()))
+                                        .caption(help.getMessage_text())
+                                        .chatId(message.getChatId())
+                                        .build()
+                                );
+                            } else if (help.getMessage_type().equals(TypeMessage.TEXT.toString())) {
+                                executeMessage(SendMessage.builder()
+                                                .text(help.getMessage_text())
+                                                .chatId(message.getChatId())
+                                                .build()
+                                        );
+                            }
+                        }
+                    } else if (message.getText().equals("Qo'llanma \uD83D\uDCD2")) {
+                        Help help=requestService.getHelp(1);
+                        if (help!=null){
+                            if (help.getMessage_type().equals(TypeMessage.VIDEO.toString())){
+                                executeMessage(SendVideo.builder()
+                                        .video(new InputFile(help.getFile_id()))
+                                        .caption(help.getMessage_text())
+                                        .chatId(message.getChatId())
+                                        .build()
+                                );
+                            } else if (help.getMessage_type().equals(TypeMessage.PHOTO.toString())) {
+                                executeMessage(SendPhoto.builder()
+                                        .photo(new InputFile(help.getFile_id()))
+                                        .caption(help.getMessage_text())
+                                        .chatId(message.getChatId())
+                                        .build()
+                                );
+                            } else if (help.getMessage_type().equals(TypeMessage.TEXT.toString())) {
+                                executeMessage(SendMessage.builder()
+                                                .text(help.getMessage_text())
+                                                .chatId(message.getChatId())
+                                                .build()
+                                        );
+                            }
+                        }
                     } else if (message.getText().equals("Отмена ↪\uFE0F")) {
                         stepUser.removeStep(message.getChatId());
                         executeMessage(SendMessag.sendM(message.getChatId(), "Процесс отменен", ReplayMarkap.menuRu(message.getChatId().toString())));
@@ -408,6 +465,50 @@ public class ControllerBot extends TelegramLongPollingBot {
                 }
                 usersMap.deleteUser(message.getChatId());
             }
+        }else if (update.hasChannelPost()){
+            if (hashtag(update.getChannelPost().getText())!=0){
+                    requestService.helpSave(Help.builder()
+                                    .id(hashtag(update.getChannelPost().getText()))
+                                    .file_id(null)
+                                    .from_id(update.getChannelPost().getChatId().toString())
+                                    .message_id(update.getChannelPost().getMessageId())
+                                    .message_lang(hashtag(update.getChannelPost().getText())==1?"UZ":"RU")
+                                    .message_text(update.getChannelPost().getText().replace("#"+hashtag(update.getChannelPost().getText()),""))
+                                    .message_type(TypeMessage.TEXT.toString())
+                            .build());
+            } else if (hashtag(update.getChannelPost().getCaption())!=0) {
+                if (update.getChannelPost().hasPhoto()) {
+                    requestService.helpSave(Help.builder()
+                            .id(hashtag(update.getChannelPost().getCaption()))
+                            .file_id(update.getChannelPost().getPhoto().get(update.getChannelPost().getPhoto().size()-1).getFileId())
+                            .from_id(update.getChannelPost().getChatId().toString())
+                            .message_id(update.getChannelPost().getMessageId())
+                            .message_lang(hashtag(update.getChannelPost().getCaption())==1?"UZ":"RU")
+                            .message_text(update.getChannelPost().getCaption().replace("#"+hashtag(update.getChannelPost().getCaption()),""))
+                            .message_type(TypeMessage.PHOTO.toString())
+                            .build());
+                } else if (update.getChannelPost().hasVideo()) {
+                    requestService.helpSave(Help.builder()
+                            .id(hashtag(update.getChannelPost().getCaption()))
+                            .file_id(update.getChannelPost().getVideo().getFileId())
+                            .from_id(update.getChannelPost().getChatId().toString())
+                            .message_id(update.getChannelPost().getMessageId())
+                            .message_lang(hashtag(update.getChannelPost().getCaption())==1?"UZ":"RU")
+                            .message_text(update.getChannelPost().getCaption().replace("#"+hashtag(update.getChannelPost().getCaption()),""))
+                            .message_type(TypeMessage.VIDEO.toString())
+                            .build());
+                } else if (update.getChannelPost().hasDocument()) {
+                    requestService.helpSave(Help.builder()
+                            .id(hashtag(update.getChannelPost().getCaption()))
+                            .file_id(update.getChannelPost().getDocument().getFileId())
+                            .from_id(update.getChannelPost().getChatId().toString())
+                            .message_id(update.getChannelPost().getMessageId())
+                            .message_lang(hashtag(update.getChannelPost().getCaption())==1?"UZ":"RU")
+                            .message_text(update.getChannelPost().getCaption().replace("#"+hashtag(update.getChannelPost().getCaption()),""))
+                            .message_type(TypeMessage.DOCUMENT.toString())
+                            .build());
+                }
+            }
         }
     }
     private void executeMessage(Object o){
@@ -420,6 +521,12 @@ public class ControllerBot extends TelegramLongPollingBot {
                 execute((DeleteMessage) o );
             } else if (o instanceof CopyMessage) {
                 execute((CopyMessage) o);
+            }else if (o instanceof SendVideo) {
+                execute((SendVideo) o);
+            }else if (o instanceof SendPhoto) {
+                execute((SendPhoto) o);
+            }else if (o instanceof SendDocument) {
+                execute((SendDocument) o);
             }
         }catch (TelegramApiException e) {
             throw new RuntimeException(e);
@@ -434,6 +541,18 @@ public class ControllerBot extends TelegramLongPollingBot {
         }
 
         return true;
+    }
+    public Integer hashtag(String text){
+        if (text!=null) {
+            Pattern pattern = Pattern.compile("#(\\d+)");
+            Matcher matcher = pattern.matcher(text);
+            Integer number = 0;
+            while (matcher.find()) {
+                number = Integer.valueOf(matcher.group(1));
+            }
+            return number;
+        }
+        return 0;
     }
 
     @Override

@@ -40,5 +40,7 @@ public class RequestUrl {
     public  URI katologUz;
     @Value("${web.katologRu}")
     public  URI katologRu;
+    @Value("${web.help}")
+    public URI help;
 
 }
