@@ -2,8 +2,6 @@ package uz.universes.leotelegrambot.Model;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

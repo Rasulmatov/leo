@@ -400,9 +400,11 @@ public class ControllerBot extends TelegramLongPollingBot {
             } else if (update.getCallbackQuery().getData().startsWith("NOTSAVE_PHOTO_")) {
                 Long chatId=Long.valueOf(update.getCallbackQuery().getData().split("_")[2]);
                 if (usersMap.getUserDto(chatId).getLang().equals("uz")) {
-                    executeMessage(SendMessag.sendM(chatId, "Bonus xisoblanmadi ❌"));
+                    stepUser.removeStep(chatId);
+                    executeMessage(SendMessag.sendM(chatId, "Bonus xisoblanmadi ❌",ReplayMarkap.menuUz(chatId.toString())));
                 } else if (usersMap.getUserDto(chatId).getLang().equals("ru")) {
-                    executeMessage(SendMessag.sendM(chatId, "Бонус не засчитывается ❌"));
+                    stepUser.removeStep(chatId);
+                    executeMessage(SendMessag.sendM(chatId, "Бонус не засчитывается ❌",ReplayMarkap.menuRu(chatId.toString())));
                 }
                 executeMessage(EditMessageText.builder().text("❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌❌\n" +
                         "#cancell "+
@@ -466,7 +468,7 @@ public class ControllerBot extends TelegramLongPollingBot {
                 usersMap.deleteUser(message.getChatId());
             }
         }else if (update.hasChannelPost()){
-            if (hashtag(update.getChannelPost().getText())!=0){
+            if ( hashtag(update.getChannelPost().getText())!=0){
                     requestService.helpSave(Help.builder()
                                     .id(hashtag(update.getChannelPost().getText()))
                                     .file_id(null)
